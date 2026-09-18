@@ -17,16 +17,22 @@ export default function NuestraMetodologia() {
         </div>
       </section>
 
-      {/* Video placeholder */}
+      {/* Video */}
       <section className="py-8 bg-warm">
         <div className="max-w-245 mx-auto px-4">
           <Reveal>
-            <div className="bg-primary-dark/10 border-2 border-dashed border-primary/30 rounded-2xl flex flex-col items-center justify-center py-16 gap-4 text-primary-dark/60">
-              <svg className="w-16 h-16 text-primary/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <p className="font-heading text-lg font-semibold text-primary/50">{metodologiaPage.videoPlaceholder}</p>
+            <div className="rounded-2xl overflow-hidden shadow-xl bg-primary-dark">
+              <video
+                className="w-full h-auto block aspect-video bg-black"
+                src={metodologiaPage.video}
+                title={metodologiaPage.videoTitle}
+                controls
+                playsInline
+                preload="metadata"
+                controlsList="nodownload"
+              >
+                Tu navegador no soporta la reproducción de vídeo.
+              </video>
             </div>
           </Reveal>
         </div>

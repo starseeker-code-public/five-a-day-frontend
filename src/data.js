@@ -157,7 +157,8 @@ export const founders = [
 
 export const metodologiaPage = {
   title: "¿Qué ofrecemos?",
-  videoPlaceholder: "Vídeo próximamente",
+  video: "/videos/video.mp4",
+  videoTitle: "Vídeo de presentación de 5 a Day",
   intro:
     "Para los más jóvenes, ofrecemos clases de inglés dos veces a la semana de 1 hora y 20 minutos de duración por sesión tanto a nivel principiante como avanzado, y todo el rango intermedio. Además, los viernes ofrecemos sesiones especiales gratuitas llamadas \"Fun Fridays\" durante las cuales se realizan actividades tan divertidas como Zumba en Inglés, talleres de manualidades o actividades dedicadas a los ODS.",
   groups:
