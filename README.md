@@ -90,9 +90,14 @@ For future backend features (forms that save to a database, user accounts, etc.)
    - [What each file does](#what-each-file-does)
    - [npm commands](#npm-commands)
 7. [Images & Media](#7-images--media)
-8. [Quick Reference](#8-quick-reference)
-9. [Troubleshooting](#9-troubleshooting)
-10. [Tech Stack](#10-tech-stack)
+8. [SEO — being found on Google](#8-seo--being-found-on-google)
+   - [Changing a page title or description](#changing-a-page-title-or-description)
+   - [If the domain ever changes](#if-the-domain-ever-changes)
+   - [The sharing image](#the-sharing-image)
+   - [Things only you can do (not in the code)](#things-only-you-can-do-not-in-the-code)
+9. [Quick Reference](#9-quick-reference)
+10. [Troubleshooting](#10-troubleshooting)
+11. [Tech Stack](#11-tech-stack)
 
 ---
 
@@ -490,9 +495,13 @@ five-a-day-frontend/
 ├── public/
 │   └── images/              ← All images used on the site
 │
+├── scripts/
+│   └── generate-seo.mjs     ← Builds a separate HTML page per address for Google
+│
 ├── src/
 │   ├── main.jsx             ← Entry point — mounts the React app
 │   ├── App.jsx              ← Router setup + image preloading
+│   ├── seo.js               ← All page titles, descriptions & Google data
 │   ├── index.css            ← Technical entry for Tailwind (don't edit)
 │   ├── styles.css           ← ✏️  All custom styles — EDIT THIS
 │   ├── data.js              ← ✏️  All content & config — EDIT THIS
@@ -549,7 +558,13 @@ five-a-day-frontend/
 
 **`src/components/ContactSection.jsx`** — The purple contact form that appears at the bottom of every page. Reads all its labels, fields, and messages from `data.js`.
 
-**`src/hooks/usePreloadImages.js`** — Silently preloads all images in the background when the app first loads, so there's no delay when users navigate between pages.
+**`src/seo.js`** — The single source of truth for everything Google sees: the title and description of each page, the web address of the site, and the structured business information (address, phone, opening hours, map position) that makes the academy eligible to appear in Google's local map results. See [section 8](#8-seo--being-found-on-google).
+
+**`scripts/generate-seo.mjs`** — Runs automatically after every build. It creates a real, separate HTML file for each page of the site so that Google sees seven distinct pages instead of seven copies of the same one, and writes `sitemap.xml` and `robots.txt`. You never need to edit this file.
+
+**`src/hooks/useSeo.js`** — Keeps the browser tab title and the official page address correct while a visitor clicks around inside the site, since the page never fully reloads.
+
+**`src/hooks/usePreloadImages.js`** — Silently preloads all images in the background so there's no delay when users navigate between pages. The download deliberately waits until the browser is idle, so it never slows down the first screen a visitor sees (Google measures that speed and uses it for ranking).
 
 ---
 
@@ -590,13 +605,93 @@ Use lowercase letters, numbers, and underscores. Examples:
 - `home_1.jpg`, `home_2.jpg` — hero and methodology block images
 - `metodologia_1.jpg` through `metodologia_6.jpg` — routine and Fun Fridays images
 - `about_galery_1.jpg` through `about_galery_11.jpg` — gallery images
-- `penelope.png`, `silvia.png` — founder portrait photos
+- `penelope.webp`, `silvia.webp` — founder portrait photos
 - `logo_transparent.png` — main logo with transparent background
 - `logo_contact.png` — logo variant used in the contact section
 
 ---
 
-## 8. Quick Reference
+## 8. SEO — being found on Google
+
+Everything that controls how the website appears in Google lives in one
+file: **`src/seo.js`**. You do not need to touch anything else.
+
+### How it works
+
+A website like ours normally has a problem: every address on the site
+(`/faq`, `/quienes-somos`, and so on) is really the *same* HTML file, so
+Google saw seven pages that all had the identical title and could not
+tell them apart.
+
+To fix this, the build now runs an extra step (`scripts/generate-seo.mjs`)
+that creates a genuine, separate HTML file for each page, each with its
+own title and description. This happens automatically every time the site
+is published — there is nothing to remember.
+
+The same step also generates:
+
+| File | What it does |
+| --- | --- |
+| `sitemap.xml` | The list of pages we ask Google to index. Submit it once in Google Search Console. |
+| `robots.txt` | Tells search engines they are welcome and where the sitemap is. |
+
+### Changing a page title or description
+
+Open `src/seo.js` and edit the `pagesSeo` list. Each page looks like this:
+
+```js
+{
+  path: "/faq",
+  title: "Preguntas frecuentes | Academia de inglés en Albacete",
+  description:
+    "Horarios, instalaciones, cómo son las clases y cómo inscribirse...",
+  priority: "0.7",
+},
+```
+
+- **`title`** — what people see as the blue clickable line in Google.
+  Keep it **under about 60 characters** or Google cuts it off.
+- **`description`** — the grey text underneath. Keep it **under about 155
+  characters**. It does not affect ranking directly, but a good one makes
+  more people click.
+- **`path`** — must exactly match the address in `src/App.jsx`.
+
+Save, commit, and the change is live in 1–2 minutes like any other edit.
+
+### If the domain ever changes
+
+Change the single line near the top of `src/seo.js`:
+
+```js
+export const SITE_URL = "https://fiveadayenglish.com";
+```
+
+Everything else — sitemap, canonical addresses, sharing links — updates
+itself from that one value.
+
+### The sharing image
+
+`public/images/og-image.jpg` is the picture that appears when someone
+shares a link on WhatsApp, Facebook or Instagram. It must stay
+**1200 x 630 pixels**. To change it, replace the file with the same name.
+
+### Things only you can do (not in the code)
+
+The single biggest factor for showing up in the Google map results for
+"academia de inglés Albacete" is **not** on this website:
+
+1. **Claim and complete the Google Business Profile** at
+   [business.google.com](https://business.google.com). Name, address,
+   phone and opening hours must match this site *exactly*.
+2. **Ask happy families for Google reviews.** Review count and rating are
+   among the strongest local ranking signals that exist.
+3. **Submit the sitemap** once at
+   [search.google.com/search-console](https://search.google.com/search-console)
+   → add `fiveadayenglish.com` → Sitemaps → enter `sitemap.xml`.
+
+---
+
+## 9. Quick Reference
 
 The most common changes and where to make them:
 
@@ -622,7 +717,7 @@ The most common changes and where to make them:
 
 ---
 
-## 9. Troubleshooting
+## 10. Troubleshooting
 
 **The site isn't updating after I committed on GitHub**
 - Wait 2–3 minutes — Netlify build times vary.
@@ -648,7 +743,7 @@ The most common changes and where to make them:
 
 ---
 
-## 10. Tech Stack
+## 11. Tech Stack
 
 | Technology | Version | Purpose |
 |---|---|---|

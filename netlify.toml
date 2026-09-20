@@ -2,7 +2,42 @@
   command = "npm run build"
   publish = "dist"
 
+# ─────────────────────────────────────────────────────────────────
+# Single-page-app fallback.
+#
+# IMPORTANT: this rule must stay WITHOUT `force = true`.
+# Netlify always serves a real file if one exists and only falls back
+# to these rules when nothing matches. That is exactly what makes the
+# per-page SEO work: /faq serves dist/faq/index.html (with its own
+# title and description), and only unknown addresses fall through to
+# the app shell here. Adding `force = true` would send every page back
+# to the generic homepage HTML and undo the SEO setup.
+# ─────────────────────────────────────────────────────────────────
 [[redirects]]
   from   = "/*"
   to     = "/index.html"
   status = 200
+
+# Always serve the freshest crawler files rather than a cached copy.
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+    Content-Type = "application/xml; charset=utf-8"
+
+[[headers]]
+  for = "/robots.txt"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Images and fonts never change without changing their name, so they
+# can be cached for a long time. Faster repeat visits = better ranking.
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "/videos/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"

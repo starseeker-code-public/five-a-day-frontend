@@ -41,7 +41,8 @@ export default function ContactSection() {
               {/* 1. Logo */}
               <img
                 src="/images/logo_transparent.png"
-                alt="Five a Day"
+                alt="Logotipo de Five a Day English Academy, Albacete"
+                loading="lazy"
                 className="h-44 w-auto mb-4 shadow-logo"
               />
 
@@ -96,7 +97,8 @@ export default function ContactSection() {
                 />
                 <img
                   src="/images/subvencion.png"
-                  alt="Subvención"
+                  alt="Sello de subvención recibida por Five a Day English Academy, Albacete"
+                  loading="lazy"
                   className="h-60 w-60 object-contain -mt-16 shadow-image"
                 />
               </div>
